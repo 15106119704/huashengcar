@@ -4,13 +4,15 @@ from django.conf import settings
 import re
 from apps.user.models import User, Address
 from django.views.generic import View
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
 from itsdangerous import TimedJSONWebSignatureSerializer as Tr
 from itsdangerous import SignatureExpired as Sd
 from django.core.mail import send_mail
 from celery_task.tasks import send_active_email
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
+from utils.mixin import LoginRequired
 # Create your views here.
 
 # 127.0.0.1：8000/user/register
@@ -138,15 +140,15 @@ class Active(View):
 class Login(View):
     def get(self, request):
         if 'username' in request.COOKIES:
-            Username = request.COOKIES.get('username')
+            username = request.COOKIES.get('password')
         else:
             username = ''
 
-        return render(request, 'user/denglu.html')
+        return render(request, 'user/denglu.html',{'username':username})
 
     def post(self, request):
-        username = request.POST.get('username')
         password = request.POST.get('password')
+        username = request.POST.get('username')
         remember = request.POST.get('remember')
 
         if not all([username, password]):
@@ -158,8 +160,13 @@ class Login(View):
         if user is not None:
             if user.is_active:
                 login(request,user)
+                next_url = request.GET.get('next',reverse('user:login'))
+                httpresponse = redirect(next_url)
+
+                #记录登录状态login
                 # httpresponse = HttpResponse('登录成功')
                 httpresponse = redirect(reverse('user:register'))
+                #redirect
                 if remember == 'on':
                     httpresponse.set_cookie('password',password)
                 else:
@@ -171,3 +178,47 @@ class Login(View):
 
         else:
             return render(request, 'user/denglu.html', {'info': '用户名或密码为空'})
+
+class ProductionShow(View):
+    def get(self,request):
+        return render(request,'')
+
+class Logout(LoginRequired,View):
+    def get(self,request):
+        logout(request=request)
+        return redirect(reverse('production:index'))
+
+
+class AddressView(View):
+    def get(self,request):
+        return render(request,'user/address.html')
+    def post(self,request):
+        address = request.POST.get('address')
+        reciver = request.POST.get('reciver')
+        post_num = request.POST.get('post_num')
+        phone_num = request.POST.get('phone_num')
+        if not all([address,reciver,post_num,phone_num]):
+            return render(request,'user/address.html',{'info':'数据不完整'})
+        if not re.match(r'^1(3|4|5|7|8)\d{9}$',phone_num):
+            return render(request, 'user/address.html', {'info': '手机号不对'})
+
+        user = request.user
+        # try:
+        #     address = Address.objects.get(user=user)
+        # except Address.DoesNotExist:
+        #     Address=None
+
+        address_object = Address.objects.get_default_address(user=user)
+        if address_object:
+            is_default = False
+        else:
+            is_default = True
+
+        Address.objects.create(user=user,reciver=reciver,post_num=post_num,phone_num=phone_num)
+
+        return redirect(reverse('user:address'))
+
+
+
+
+

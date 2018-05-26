@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'apps.production',
     'apps.collectioncar',
     'apps.orderform',
+    'haystack',
 )
 
 AUTH_USER_MODEL = "user.User"
@@ -136,5 +137,16 @@ EMAIL_FROM = '花生二手车直卖<15381079273@163.com>'
 #         }
 #     }
 # }
-# SESSION_ENGINE = 'django.contrib.session.backends.cache'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # SESSION_CACHE_ALIAS = 'default'
+MEDIA_ROOT = os.path.join(BASE_DIR,'static/media')
+
+import os
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__),
+        'whoosh_index'),
+    },
+}
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'

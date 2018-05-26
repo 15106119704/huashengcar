@@ -20,3 +20,11 @@ class Address(BaseModel):
     class Meta:
         db_table = 'hs_address'
         verbose_name='地址'
+
+class dm(models.Manager):
+    def get_default_address(self,user):
+        try:
+            address = self.get(user=user,is_default=True)
+        except self.model.DoesNotExist:
+            address = ''
+        return address

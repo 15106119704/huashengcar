@@ -18,7 +18,11 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'tinymce',include('tinymce.urls')),
+    url(r'tinymce/',include('tinymce.urls')),
+    url(r'^search/',include('haystack.urls')),
     #     配置富文本编辑器
-    url(r'^user/',include('apps.user.urls',namespace='user'))
+    url(r'^user/',include('apps.user.urls',namespace='user')),
+    url(r'^production/',include('apps.production.url',namespace='production')),
+    url(r'^collectioncar/',include('apps.collectioncar.urls',namespace='collectioncar')),
+    url(r'^orderform/',include('apps.orderform.urls')),
 ]

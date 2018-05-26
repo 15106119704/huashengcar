@@ -1,0 +1,14 @@
+# Created by .ignore support plugin (hsz.mobi)
+将删除 .idea/inspectionProfiles/
+将删除 .idea/vcs.xml
+将删除 apps/production/__pycache__/search_indexes.cpython-35.pyc
+将删除 apps/production/__pycache__/url.cpython-35.pyc
+将删除 apps/production/__pycache__/views.cpython-35.pyc
+将删除 huashengcar/whoosh_index/
+将删除 static/
+将删除 templates/buy/
+将删除 templates/production/css/
+将删除 templates/production/image/
+将删除 templates/production/index.html
+将删除 templates/production/js/
+将删除 utils/__pycache__/

@@ -15,6 +15,8 @@ class Order(BaseModel):
     address = models.ForeignKey('user.Address',verbose_name='收货地址')
     paystyle = models.SmallIntegerField(choices=((0,'贷款'),(1,'支付宝'),(2,'网银')),default=1,verbose_name='支付方式')
     status = models.SmallIntegerField(choices=STATUS_CHOICE,verbose_name='订单状态')
+    tprice = models.DecimalField(max_digits=20, decimal_places=5, verbose_name='总价')
+
 
     class Meta:
         db_table = 'hs_order'
